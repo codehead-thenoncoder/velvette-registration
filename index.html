@@ -122,7 +122,7 @@
   spinner.classList.add('hidden');
   buttonText.textContent = 'Register Now';
   submitButton.disabled = false;
-}
+});
   document.querySelectorAll('input[required]').forEach(input=>{
     input.addEventListener('blur',()=>input.classList.toggle('border-red-300',input.value.trim()===''));
   });
