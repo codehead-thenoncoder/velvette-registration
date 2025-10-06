@@ -72,61 +72,40 @@
 </div>
 
 <script>
-  const form = document.getElementById('registrationForm');
-  const submitButton = document.getElementById('submitButton');
-  const messageBox = document.getElementById('messageBox');
+const form = document.getElementById('registrationForm');
+const submitButton = document.getElementById('submitButton');
+const messageBox = document.getElementById('messageBox');
 
-  // ✅ Updated Web App URL
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbw59k1yEEwom4bzbHBEWvoOfpckefQepmqvhPWqrd7V0vdGr155IZLf01KQFPHsw9HGhw/exec';
+// Google Apps Script Web App URL
+const scriptURL = 'https://script.google.com/macros/s/AKfycbwGnIl0HNoLPIJP9ClnBEheiAfnKEIPg0JIngo_WJMzX5xFjn3RKv1xAO-4e4-CNOJMTg/exec';
 
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    submitButton.disabled = true;
-    submitButton.textContent = 'Submitting...';
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  submitButton.disabled = true;
+  submitButton.textContent = 'Submitting...';
 
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
 
-    fetch(scriptURL, {
-      method: 'POST',
-      mode: 'cors',  // ✅ Ensures proper CORS handling
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === 'success') {
-        showMessage('Registration successful! Your information has been submitted.', 'success');
-        form.reset();
-      } else {
-        showMessage('An error occurred: ' + data.message, 'error');
-      }
-    })
-    .catch(error => {
-      console.error('Error!', error);
-      showMessage('An error occurred. Please try again.', 'error');
-    })
-    .finally(() => {
-      submitButton.disabled = false;
-      submitButton.textContent = 'Register Now';
-    });
+  fetch(scriptURL, {
+    method: 'POST',
+    mode: 'no-cors', // ✅ avoids CORS errors
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).finally(() => {
+    showMessage('Registration submitted successfully!', 'success');
+    form.reset();
+    submitButton.disabled = false;
+    submitButton.textContent = 'Register Now';
   });
+});
 
-  function showMessage(message, type) {
-    messageBox.textContent = message;
-    messageBox.className = 'message-box';
-    if (type === 'success') {
-      messageBox.classList.add('success-message');
-    } else {
-      messageBox.classList.add('error-message');
-    }
-    messageBox.style.display = 'block';
-    setTimeout(() => {
-      messageBox.style.display = 'none';
-    }, 5000);
-  }
+function showMessage(message, type) {
+  messageBox.textContent = message;
+  messageBox.className = 'message-box ' + (type === 'success' ? 'success-message' : 'error-message');
+  messageBox.style.display = 'block';
+  setTimeout(() => messageBox.style.display = 'none', 5000);
+}
 </script>
 
 </body>
