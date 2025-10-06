@@ -23,7 +23,7 @@
   <img src="https://orangered-dugong-694589.hostingersite.com/wp-content/uploads/2025/10/Logo_Gold-scaled.png" alt="Velvette Logo" class="logo">
 </nav>
 
-<!-- HERO BANNER -->
+<!-- HERO BANNER 1920×700 -->
 <div class="w-full">
   <img src="https://orangered-dugong-694589.hostingersite.com/wp-content/uploads/2025/10/VELVETTE-WEBSITE-BANNER.jpg"
        alt="Velvette Banner"
@@ -39,12 +39,12 @@
         <input type="text" id="fullName" name="fullName" required class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200" placeholder="Enter your name">
       </div>
       <div>
-        <label for="company" class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
-        <input type="text" id="company" name="company" required class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200" placeholder="Enter your company name">
-      </div>
-      <div>
         <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
         <input type="tel" id="phone" name="phone" required class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200" placeholder="Enter your phone number">
+      </div>
+      <div>
+        <label for="company" class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
+        <input type="text" id="company" name="company" class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200" placeholder="Enter your company name">
       </div>
       <button id="submitButton" type="submit" class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-purple-600 hover:to-blue-600 transform hover:scale-105 transition-all duration-200 shadow-lg flex justify-center items-center gap-2">
         <span id="buttonText">Register Now</span>
@@ -57,19 +57,19 @@
         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
         <span class="font-medium">Registration successful!</span>
       </div>
-      <p class="mt-2 text-sm">Your information has been sent successfully.</p>
+      <p class="mt-2 text-sm">Your information has been sent to our system.</p>
     </div>
   </div>
 </div>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbw32e7zRY5SxCQDhk7TpdmqoDgLpsk7Kme19r0tNJX-INbOqPTfgo0Q2EW1tmTL-hsM4Q/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbzdefs9QCcJ9IedBkynJeRDfijV1aeC1WhV7OIc2TzydI4M3R3N6rBLI_ALBoAD9v3zZw/exec";
 const form = document.getElementById('registrationForm');
 const submitButton = document.getElementById('submitButton');
 const spinner = document.getElementById('spinner');
 const buttonText = document.getElementById('buttonText');
 
-form.addEventListener('submit', async e => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
   spinner.classList.remove('hidden');
   buttonText.textContent = 'Submitting...';
@@ -78,23 +78,21 @@ form.addEventListener('submit', async e => {
   const formData = new FormData(form);
   const data = {
     fullName: formData.get('fullName'),
-    company: formData.get('company'),
-    phone: formData.get('phone')
+    phone: formData.get('phone'),
+    company: formData.get('company') || 'Not specified'
   };
 
   try {
     const res = await fetch(scriptURL, {
       method: 'POST',
-      mode: 'cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
 
     if (res.ok) {
       document.getElementById('successMessage').classList.remove('hidden');
-      document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
-      form.reset();
       setTimeout(() => {
+        form.reset();
         document.getElementById('successMessage').classList.add('hidden');
       }, 5000);
     } else {
@@ -110,5 +108,6 @@ form.addEventListener('submit', async e => {
   }
 });
 </script>
+
 </body>
 </html>
