@@ -123,17 +123,6 @@
   buttonText.textContent = 'Register Now';
   submitButton.disabled = false;
 }
-      if(res.ok){
-        document.getElementById('successMessage').classList.remove('hidden');
-        document.getElementById('dataContent').textContent=JSON.stringify(data,null,2);
-        document.getElementById('dataPreview').classList.remove('hidden');
-        document.getElementById('successMessage').scrollIntoView({behavior:'smooth'});
-        setTimeout(()=>{form.reset();document.getElementById('successMessage').classList.add('hidden');document.getElementById('dataPreview').classList.add('hidden');},5000);
-      }else{alert('Error submitting form. Please try again.');}
-    }catch(err){console.error(err);alert('Network error. Please try again later.');}
-    finally{spinner.classList.add('hidden');buttonText.textContent='Register Now';submitButton.disabled=false;}
-  });
-
   document.querySelectorAll('input[required]').forEach(input=>{
     input.addEventListener('blur',()=>input.classList.toggle('border-red-300',input.value.trim()===''));
   });
