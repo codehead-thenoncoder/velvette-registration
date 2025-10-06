@@ -10,7 +10,9 @@
     .form-container {background:linear-gradient(135deg,#d4af37 0%,#b8860b 50%,#8b7355 100%); min-height:100vh; display:flex; flex-direction:column; align-items:center;}
     .navbar {background:rgba(255,255,255,.9); box-shadow:0 2px 4px rgba(0,0,0,.1); width:100%; height:48px; display:flex; align-items:center; padding:0 16px;}
     .logo {height:100%; width:auto;}
-    .success-message {display:none; margin-top:16px; padding:12px; background-color:#d1fae5; border:1px solid #10b981; color:#065f46; border-radius:8px;}
+    .message-box {display:none; margin-top:16px; padding:12px; border-radius:8px; border: 1px solid;}
+    .success-message {background-color:#d1fae5; border-color:#10b981; color:#065f46;}
+    .error-message {background-color:#fee2e2; border-color:#ef4444; color:#991b1b;}
     .input-focus:focus {transform:translateY(-2px); box-shadow:0 10px 25px rgba(0,0,0,.1);}
   </style>
 </head>
@@ -18,20 +20,22 @@
 
 <!-- NAVBAR -->
 <nav class="navbar">
-  <img src="https://orangered-dugong-694589.hostingersite.com/wp-content/uploads/2025/10/Logo_Gold-scaled.png" alt="Velvette Logo" class="logo">
+  <img src="https://orangered-dugong-694589.hostingersite.com/wp-content/uploads/2025/10/Logo_Gold-scaled.png" alt="Velvette Logo" class="logo" onerror="this.onerror=null;this.src='https://placehold.co/100x48/d4af37/ffffff?text=Velvette';">
 </nav>
 
 <!-- HERO BANNER -->
 <div class="w-full">
   <img src="https://orangered-dugong-694589.hostingersite.com/wp-content/uploads/2025/10/VELVETTE-WEBSITE-BANNER.jpg"
        alt="Velvette Banner"
-       class="w-full h-[400px] object-cover shadow-lg">
+       class="w-full h-[400px] object-cover shadow-lg"
+       onerror="this.onerror=null;this.src='https://placehold.co/1200x400/8b7355/ffffff?text=Welcome';">
 </div>
 
 <!-- FORM -->
 <div class="w-full -mt-12">
   <div class="bg-white rounded-t-3xl shadow-2xl w-full max-w-2xl mx-auto p-8">
-    <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbzdefs9QCcJ9IedBkynJeRDfijV1aeC1WhV7OIc2TzydI4M3R3N6rBLI_ALBoAD9v3zZw/exec" method="post" target="hidden_iframe" onsubmit="showSuccess()">
+    <!-- The form tag no longer needs action, method, or target attributes -->
+    <form id="registrationForm">
       
       <div class="mb-4">
         <label for="fullName" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
@@ -48,26 +52,74 @@
         <input type="tel" id="phone" name="phone" required class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200" placeholder="Enter your phone number">
       </div>
 
-      <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-purple-600 hover:to-blue-600 transform hover:scale-105 transition-all duration-200 shadow-lg">
+      <button type="submit" id="submitButton" class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-purple-600 hover:to-blue-600 transform hover:scale-105 transition-all duration-200 shadow-lg">
         Register Now
       </button>
     </form>
 
-    <div id="successMessage" class="success-message">
-      Registration successful! Your information has been submitted.
-    </div>
+    <!-- Message area for success or error -->
+    <div id="messageBox" class="message-box"></div>
 
-    <!-- Hidden iframe to avoid page redirect on submit -->
-    <iframe name="hidden_iframe" style="display:none;"></iframe>
   </div>
 </div>
 
 <script>
-  function showSuccess() {
-    document.getElementById('successMessage').style.display = 'block';
+  const form = document.getElementById('registrationForm');
+  const submitButton = document.getElementById('submitButton');
+  const messageBox = document.getElementById('messageBox');
+  // IMPORTANT: Replace this with your actual Google Apps Script URL
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbzdefs9QCcJ9IedBkynJeRDfijV1aeC1WhV7OIc2TzydI4M3R3N6rBLI_ALBoAD9v3zZw/exec';
+
+  form.addEventListener('submit', e => {
+    e.preventDefault(); // Prevents the default form submission behavior
+
+    // Disable button to prevent multiple submissions
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+    
+    // Create a FormData object from the form
+    const formData = new FormData(form);
+    // Convert FormData to a plain JavaScript object
+    const data = Object.fromEntries(formData.entries());
+
+    // Use the fetch API to send the data as a JSON string
+    fetch(scriptURL, { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+      showMessage('Registration successful! Your information has been submitted.', 'success');
+      form.reset();
+    })
+    .catch(error => {
+      console.error('Error!', error.message);
+      showMessage('An error occurred. Please try again.', 'error');
+    })
+    .finally(() => {
+        // Re-enable the button after the request is complete
+        submitButton.disabled = false;
+        submitButton.textContent = 'Register Now';
+    });
+  });
+
+  function showMessage(message, type) {
+    messageBox.textContent = message;
+    messageBox.className = 'message-box'; // Reset classes
+    if (type === 'success') {
+        messageBox.classList.add('success-message');
+    } else {
+        messageBox.classList.add('error-message');
+    }
+    messageBox.style.display = 'block';
+
+    // Hide the message after 5 seconds
     setTimeout(() => {
-      document.getElementById('successMessage').style.display = 'none';
-      document.getElementById('registrationForm').reset();
+        messageBox.style.display = 'none';
     }, 5000);
   }
 </script>
